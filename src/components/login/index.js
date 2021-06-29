@@ -17,7 +17,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { useDispatch } from 'react-redux'
-import {getToken, axios} from '../../reusable'
+import { getToken, axios } from '../../reusable'
 
 
 const Login = () => {
@@ -53,14 +53,16 @@ const Login = () => {
     if (handleValidation()) {
       try {
         let response = await axios
-          .post('login', params)
+          .post('user/login', params)
           .catch(err => {
             console.log(err);
           })
-        console.log("admin_data", response?.data?.data.user);
-        localStorage.setItem("admin_token", response?.data?.adminToken)
-        localStorage.setItem("admin_data", JSON.stringify(response?.data?.data?.user))
-        dispatch(setAdminData(true))
+        if (response?.data?.status_code === 200) {
+          localStorage.setItem("admin_token", response?.data?.userToken)
+          localStorage.setItem("admin_data", JSON.stringify(response?.data?.data?.user))
+          dispatch(setAdminData(true))
+        }
+
       } catch (e) {
         console.log(e);
       }

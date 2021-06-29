@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {getToken} from './index'
 const instance = axios.create({
-    // baseURL: 'https://api.hashimrasheed.co/admin/'
-    baseURL: 'http://localhost:3001/admin/'
+    // baseURL: 'https://api.hashimrasheed.co/seller/'
+    baseURL: 'http://localhost:3002/'
 });
 
 export default instance;
