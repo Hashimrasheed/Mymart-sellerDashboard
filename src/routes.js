@@ -3,6 +3,16 @@ import React from 'react';
 
 const Dashboard = React.lazy(() => import('./components/Layout/dashboard'));
 const Brand = React.lazy(() => import('./components/Layout/products/brands'));
+const OptionTypes = React.lazy(() => import('./components/Layout/products/optionTypes'));
+const OptionValues = React.lazy(() => import('./components/Layout/products/optionValues'));
+const Removables = React.lazy(() => import('./components/Layout/products/removables'));
+const Categories = React.lazy(() => import('./components/Layout/products/categories'));
+const AllProducts = React.lazy(() => import('./components/Layout/products/products'));
+const AddProducts = React.lazy(() => import('./components/Layout/products/products/addProduct'));
+const EditProducts = React.lazy(() => import('./components/Layout/products/products/editProduct'));
+const ProductsModel = React.lazy(() => import('./components/Layout/products/products/productModel'));
+const ProductsImage = React.lazy(() => import('./components/Layout/products/products/productImage'));
+
 const Sellers = React.lazy(() => import('./components/Layout/sellers'));
 const Customers = React.lazy(() => import('./components/Layout/customers'));
 const Orders = React.lazy(() => import('./components/Layout/orders'));
@@ -15,13 +25,15 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/brands', name: 'brands', component: Brand },
-  { path: '/categories', name: 'categories', component: Dashboard },
-  { path: '/options', name: 'options', component: Dashboard },
-  { path: '/option-values', name: 'option-values', component: Dashboard },
-  { path: '/add-ons-types', name: 'add-ons-types', component: Dashboard },
-  { path: '/add-ons-values', name: 'add-ons-values', component: Dashboard },
-  { path: '/removables', name: 'removables', component: Dashboard },
-  { path: '/products', name: 'products', component: Dashboard },
+  { path: '/categories', name: 'categories', component: Categories },
+  { path: '/option-types', name: 'option-types', component: OptionTypes },
+  { path: '/option-values', name: 'option-values', component: OptionValues },
+  { path: '/removables', name: 'removables', component: Removables },
+  { path: '/products', name: 'products', component: AllProducts },
+  { path: '/add-products', name: 'products', component: AddProducts },
+  { path: '/edit-products/:productId', name: 'products', component: EditProducts },
+  { path: '/products-model/:productId', name: 'products', component: ProductsModel },
+  { path: '/products-image/:productId', name: 'products', component: ProductsImage },
   { path: '/orders', name: 'orders', component: Dashboard },
   { path: '/delivered-orders', name: 'delivered-orders', component: Dashboard },
   { path: '/settings', name: 'settings', component: Sellers },

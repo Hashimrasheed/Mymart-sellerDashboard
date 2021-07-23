@@ -30,24 +30,24 @@ const _nav =  [
       },
       {
         _tag: 'CSidebarNavItem',
-        name: 'Options',
-        to: '/options',
+        name: 'Option Types',
+        to: '/option-types',
       },
       {
         _tag: 'CSidebarNavItem',
-        name: 'Option Values',
+        name: 'Options',
         to: '/option-values',
       },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Add Ons Types',
-        to: '/add-ons-types',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Add Ons Values',
-        to: '/add-ons-values',
-      },
+      // {
+      //   _tag: 'CSidebarNavItem',
+      //   name: 'Add Ons Types',
+      //   to: '/add-ons-types',
+      // },
+      // {
+      //   _tag: 'CSidebarNavItem',
+      //   name: 'Add Ons Values',
+      //   to: '/add-ons-values',
+      // },
       {
         _tag: 'CSidebarNavItem',
         name: 'Removables',

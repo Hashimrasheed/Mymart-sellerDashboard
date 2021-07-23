@@ -5,22 +5,12 @@ import { Image, Edit, Trash } from "react-feather";
 import {
   CBadge,
   CButton,
-  CButtonGroup,
   CCard,
   CCardBody,
-  CCardFooter,
   CCardHeader,
-  CDropdown,
-  CDropdownDivider,
-  CDropdownHeader,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
   CCol,
   CDataTable,
-  CProgress,
   CRow,
-  CCallout,
   CFormGroup,
   CInputGroup,
   CInput,
@@ -37,7 +27,6 @@ import {
 import CIcon from '@coreui/icons-react'
 
 const getBadge = status => {
-  console.log("zzz,", status);
   switch (status) {
     case true: return 'success'
     case false: return 'secondary'
@@ -52,10 +41,13 @@ const Brands = () => {
     'Accept': 'application/json',
     "Authorization": `Bearer ${admin}`
   }
-
   const [brands, setBrands] = useState([])
   const [total, setTotal] = useState("")
+  const [deleteBrandId, setDeleteBrandId] = useState("")
+  const [brandAdded, setBrandAdded] = useState('')
   const [modal, setModal] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [editBrand, setEditBrand] = useState(false)
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     nameError: false,
@@ -66,10 +58,11 @@ const Brands = () => {
     name: '',
     status: false,
     image: '',
+    image_url: '',
+    _id: ''
   })
 
   const setBrandData = (name: string, value: any) => {
-    console.log(brand);
     if (name === "status") {
       value = JSON.parse(value)
     }
@@ -83,7 +76,6 @@ const Brands = () => {
 
   useEffect(() => {
     try {
-
       axios.get('brand/', { headers })
         .then((response) => {
           console.log("zzz", response);
@@ -102,13 +94,14 @@ const Brands = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [])
+  }, [brandAdded])
 
   const openFileInput = async () => {
     await inputFile.current.click();
   };
 
   const handleImageUpload = (e) => {
+    setBrandData("image_url", null)
     setBrandData("image", e.target.files[0])
   }
 
@@ -117,7 +110,6 @@ const Brands = () => {
     let errors = {};
 
     if (!brand.name || brand.name == '') {
-      console.log("hi");
       formIsValid = false;
       errors["name"] = 'This field is required';
       errors["nameError"] = true;
@@ -135,15 +127,60 @@ const Brands = () => {
         formData.append('bimage', brand.image);
         formData.append("name", brand.name);
         formData.append("status", brand.status);
-        axios.post('brand/add/', formData, { headers }).then(res => {
-          setLoading(false);
-          setModal(false)
-        }).catch(e => {
-          if (e.errors) {
+        axios.post('brand/add/', formData, { headers })
+          .then(res => {
+            setBrand({
+              name: '',
+              status: false,
+              image: '',
+              image_url: '',
+              _id: ''
+            })
             setLoading(false);
-            setErrors(e.errors)
-          }
-        })
+            setModal(false)
+            setBrandAdded(res?.data?.data?.brand?.name)
+          }).catch(e => {
+            if (e.errors) {
+              setLoading(false);
+              setErrors(e.errors)
+            }
+          })
+      } catch (e) {
+        setLoading(false);
+        console.log(e)
+      }
+    } else {
+      setLoading(false);
+    }
+  }
+  
+  const updateBrand = async () => {
+    setLoading(true);
+    if (handleValidation() == true) {
+      try {
+        let formData = new FormData()
+        formData.append('bimage', brand.image);
+        formData.append("name", brand.name);
+        formData.append("status", brand.status);
+        formData.append("_id", brand._id);
+        axios.put(`brand/update/${brand._id}`, formData, { headers })
+          .then(res => {
+            setBrand({
+              name: '',
+              status: false,
+              image: '',
+              image_url: '',
+              _id: ''
+            })
+            setLoading(false);
+            setModal(false)
+            setBrandAdded(res?.data?.data?.brand?.name)
+          }).catch(e => {
+            if (e.errors) {
+              setLoading(false);
+              setErrors(e.errors)
+            }
+          })
       } catch (e) {
         setLoading(false);
         console.log(e)
@@ -153,6 +190,37 @@ const Brands = () => {
     }
   }
 
+  const openEditPage = (_id, image_url, name, status) => {
+    setModal(!modal);
+    setEditBrand(true)
+    setBrand({
+      name: name,
+      status: status,
+      image: '',
+      image_url: image_url,
+      _id: _id
+    })
+  }
+
+  const deleteBrand = async (_id) => {
+    setLoading(true);
+      try {
+        axios.delete(`brand/delete/${_id}`, { headers })
+          .then(res => {
+            setLoading(false);
+            setDeleteConfirm(false)
+            setBrandAdded(_id)
+          }).catch(e => {
+            if (e.errors) {
+              setLoading(false);
+              console.log(e.errors);
+            }
+          })
+      } catch (e) {
+        setLoading(false);
+        console.log(e)
+      }
+  }
   return (
     <>
       <CRow>
@@ -182,8 +250,14 @@ const Brands = () => {
               <CDataTable
                 items={brands}
                 fields={fields}
+                responsive={true}
+                outlined
                 itemsPerPage={10}
                 pagination
+                activePage
+                hover
+                underTableSlot={`Total: ${total}`}
+                itemsPerPageSelect={ {label: 'Brands per page:',  values: [5, 10, 20, 50, 100] }}
                 scopedSlots={{
                   '#':
                     (item, i) => (
@@ -222,14 +296,18 @@ const Brands = () => {
                   'Edit':
                     (item) => (
                       <td>
-                        <Edit color="gray" style={{ cursor: 'pointer' }} size={20}
+                        <Edit color="gray" style={{ cursor: 'pointer' }} onClick={() => {
+                          openEditPage(item._id, item.image_url, item.name, item.status)
+                        }} size={20}
                         />
                       </td>
                     ),
-                    'Delete':
+                  'Delete':
                     (item) => (
                       <td>
-                        <Trash color="red" style={{ cursor: 'pointer' }} size={20}
+                        <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => {
+                          setDeleteConfirm(!deleteConfirm), setDeleteBrandId(item._id)
+                        }} size={20}
                         />
                       </td>
                     )
@@ -241,17 +319,21 @@ const Brands = () => {
           <CModal
             show={modal}
             style={{ top: "5rem" }}
-            onClose={() => setModal(!modal)}
+            onClose={() => {
+              setModal(!modal);
+              editBrand ? setEditBrand(false) : null
+            }}
             color="info"
           >
             <CModalHeader closeButton>
-              <CModalTitle>Add Brand</CModalTitle>
+              <CModalTitle>{editBrand ? "Edit Brand" : "Add Brand"}</CModalTitle>
             </CModalHeader>
             <CModalBody>
               <div style={{ "margin-left": "35%" }}>
+                {console.log("brand", brand)}
                 {
-                  brand.image ? <div>
-                    <img style={{ width: "6rem" }} src={URL.createObjectURL(brand.image)} alt="brand img" />
+                  brand.image || brand.image_url ? <div>
+                    <img style={{ width: "6rem" }} src={brand.image_url ? brand.image_url : brand.image ? URL.createObjectURL(brand.image) : ""} alt="brand img" />
                   </div>
                     : null
                 }
@@ -299,7 +381,20 @@ const Brands = () => {
               </CFormGroup>
             </CModalBody>
             <CModalFooter>
-              <CButton color="secondary" onClick={() => setModal(!modal)}>Cancel</CButton>
+              <CButton color="secondary" onClick={() => {
+                setModal(!modal);
+                editBrand ? setEditBrand(false) : null
+              }}>Cancel</CButton>
+              {
+                editBrand ?
+                <CButton
+                color="danger"
+                onClick={e => {
+                  e.preventDefault();
+                  updateBrand();
+                }}
+              >{loading ? "Updating Brand" : "Update Brand"}</CButton>
+              : 
               <CButton
                 color="danger"
                 onClick={e => {
@@ -307,8 +402,29 @@ const Brands = () => {
                   saveBrand();
                 }}
               >{loading ? "Saving Brand" : "Add Brand"}</CButton>
+              }
             </CModalFooter>
           </CModal>
+
+          <CModal 
+              show={deleteConfirm} 
+              style={{ top: "10rem" }}
+              onClose={() => setDeleteConfirm(!deleteConfirm)}
+              size="sm"
+            >
+              <CModalHeader closeButton>
+                <CModalTitle>Are you sure ?</CModalTitle>
+              </CModalHeader>
+                
+
+              <CModalBody>
+                Do you want to delete this brand
+              </CModalBody>
+              <CModalFooter >
+                <CButton style={{"margin-right": "2rem"}} color="secondary" onClick={() => setDeleteConfirm(!deleteConfirm)}>Cancel</CButton>
+                <CButton color="danger" onClick={() => deleteBrand(deleteBrandId)}>Delete</CButton>{' '}
+              </CModalFooter>
+            </CModal>
         </CCol>
       </CRow>
     </>
