@@ -16,6 +16,9 @@ function editProductHeaders(props) {
                                     <CNavLink to={`/products-model/${props.productId}`}>Model</CNavLink>
                                 </CNavItem>
                                 <CNavItem>
+                                    <CNavLink to={`/products-links/${props.productId}`}>Links</CNavLink>
+                                </CNavItem>
+                                <CNavItem>
                                     <CNavLink to={`/products-image/${props.productId}`}>Image</CNavLink>
                                 </CNavItem>
                             </CNav>

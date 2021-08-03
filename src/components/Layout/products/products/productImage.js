@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     CButton,
     CCard,
@@ -16,6 +16,7 @@ import {
     CNavItem,
     CNavLink,
 } from '@coreui/react'
+import { Image, Edit, Trash } from "react-feather";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useHistory } from 'react-router'
@@ -31,11 +32,12 @@ const AddImage = () => {
     const generalAddingCompleted = useSelector((state) => state.product.generalAdding)
     const dispatch = useDispatch();
     let { productId } = useParams()
+    const inputFile = useRef(null)
 
     let response
     const [params, setParams] = useState({
-        name: '',
-        description: '',
+        image_url: '',
+        image: '',
     })
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({ any: [] })
@@ -99,14 +101,23 @@ const AddImage = () => {
         }
     }, [generalAddingCompleted])
 
+    const openFileInput = async () => {
+        await inputFile.current.click();
+    };
+
+
+    const handleImageUpload = (e) => {
+        setParam("image_url", null)
+        setParam("image", e.target.files[0])
+    }
     return (
         <>
-            <EditProductHeaders productId={productId}/>
+            <EditProductHeaders productId={productId} />
             <CRow>
                 <CCol xs="12" md="12">
                     <CCard >
                         <CCardHeader>
-                            Edit Product
+                            Product Image
                         </CCardHeader>
                         <CCardBody>
                             <CForm
@@ -120,34 +131,67 @@ const AddImage = () => {
                     <CFormText>This is a help text</CFormText>
                   </CCol>
                 </CFormGroup> */}
-                                <CFormGroup row>
+                                <CCol xl="2" md="4" sm="6" xs="12" className="mb-4">
+                                    <div >
+                                        <div >
+                                            {
+                                                params.image || params.image_url ? <div>
+                                                    <img style={{ width: "6rem" }} src={params.image_url ? params.image_url : params.image ? URL.createObjectURL(params.image) : ""} alt="img" />
+                                                </div>
+                                                    : null
+                                            }
+                                            <CFormGroup row>
+                                                <CCol xs="12" md="12" >
+                                                    {/* <div style={{"border-style": "groove"}}> */}
+                                                    <img
+                                                        src="/common/upload_image.jpeg"
+                                                        style={{ width: "6rem", height: "6rem", cursor: 'pointer', "border-style": "groove", "padding": "1rem" }}
+                                                        onClick={e => {
+                                                            openFileInput()
+                                                        }}
+                                                        alt="Choose file"
+                                                    />
+                                                    <input type='file' onChange={handleImageUpload} accept="jpg png jpeg" id='file' ref={inputFile} style={{ display: 'none' }} />
+                                                    {/* </div> */}
+                                                </CCol>
+                                            <Trash color="red" style={{ cursor: 'pointer', "margin-left": "1rem", "margin-top": "1rem" }} size={20} />
+                                            </CFormGroup>
+                                            <h5>Main Image
 
-                                    <CCol xs="12" md="12">
-                                        <label>Product Name</label>
-                                        <CInput
-                                            type="text-input"
-                                            error={errors.name}
-                                            value={params.name}
-                                            onChange={e => setParam("name", e.target.value)}
-                                            id="text-input"
-                                            name="name"
-                                            placeholder="Product Name"
-                                            autoComplete="text-input"
-                                        />
-                                        {/* <CFormText className="help-block">Please enter your email</CFormText> */}
-                                    </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                    <CCol xs="12" md="12">
-                                        <label>Product Discription</label>
-                                        <CKEditor
-                                            editor={ClassicEditor}
-                                            data={params.description}
-                                            onChange={(event, editor) => setParam('description', editor.getData())}
-                                        />
-                                        {/* <CFormText className="help-block">Please enter a complex password</CFormText> */}
-                                    </CCol>
-                                </CFormGroup>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </CCol>
+
+                                <CCol xl="2" md="4" sm="6" xs="12" className="mb-4">
+                                    <div >
+                                        <div >
+                                            {
+                                                params.image || params.image_url ? <div>
+                                                    <img style={{ width: "6rem" }} src={params.image_url ? params.image_url : params.image ? URL.createObjectURL(params.image) : ""} alt="img" />
+                                                </div>
+                                                    : null
+                                            }
+                                            <CFormGroup row>
+                                                <CCol xs="12" md="12" >
+                                                    {/* <div style={{"border-style": "groove"}}> */}
+                                                    <img
+                                                        src="/common/upload_image.jpeg"
+                                                        style={{ width: "6rem", height: "6rem", cursor: 'pointer', "border-style": "groove", "padding": "1rem" }}
+                                                        onClick={e => {
+                                                            openFileInput()
+                                                        }}
+                                                        alt="Choose file"
+                                                    />
+                                                    <input type='file' onChange={handleImageUpload} accept="jpg png jpeg" id='file' ref={inputFile} style={{ display: 'none' }} />
+                                                    {/* </div> */}
+                                                </CCol>
+                                            </CFormGroup>
+                                            <h5>Additional Images</h5>
+                                        </div>
+
+                                    </div>
+                                </CCol>
                             </CForm>
                         </CCardBody>
                         <CCardFooter>

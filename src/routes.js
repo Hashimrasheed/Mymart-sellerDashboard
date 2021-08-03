@@ -11,6 +11,7 @@ const AllProducts = React.lazy(() => import('./components/Layout/products/produc
 const AddProducts = React.lazy(() => import('./components/Layout/products/products/addProduct'));
 const EditProducts = React.lazy(() => import('./components/Layout/products/products/editProduct'));
 const ProductsModel = React.lazy(() => import('./components/Layout/products/products/productModel'));
+const ProductsLinks = React.lazy(() => import('./components/Layout/products/products/productLinks'));
 const ProductsImage = React.lazy(() => import('./components/Layout/products/products/productImage'));
 
 const Sellers = React.lazy(() => import('./components/Layout/sellers'));
@@ -33,6 +34,7 @@ const routes = [
   { path: '/add-products', name: 'products', component: AddProducts },
   { path: '/edit-products/:productId', name: 'products', component: EditProducts },
   { path: '/products-model/:productId', name: 'products', component: ProductsModel },
+  { path: '/products-links/:productId', name: 'products', component: ProductsLinks },
   { path: '/products-image/:productId', name: 'products', component: ProductsImage },
   { path: '/orders', name: 'orders', component: Dashboard },
   { path: '/delivered-orders', name: 'delivered-orders', component: Dashboard },

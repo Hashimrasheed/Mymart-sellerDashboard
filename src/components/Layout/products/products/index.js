@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { getToken, axios } from '../../../../reusable'
-import { Image, Edit, Trash } from "react-feather";
+import { Edit, Trash } from "react-feather";
 import {
     CBadge,
     CButton,

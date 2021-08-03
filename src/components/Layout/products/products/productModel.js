@@ -82,7 +82,6 @@ const AddModel = () => {
                         console.log(err);
                     })
                 if (response) {
-                    console.log("respo", response.data);
                     if (response?.data?.status_code === 200) {
                         dispatch(generalAdding())
                     }
@@ -138,11 +137,11 @@ const AddModel = () => {
             setParam("selected_price", selected_price)
         }
         if (key == "price") {
-                let specialPrice = 0
-                data.price ? specialPrice = value - value * Number(data.discountPercentage) / 100 : 0
-                set(data, "specialPrice", specialPrice);
-                selected_price[index] = data
-                setParam("selected_price", selected_price)
+            let specialPrice = 0
+            data.price ? specialPrice = value - value * Number(data.discountPercentage) / 100 : 0
+            set(data, "specialPrice", specialPrice);
+            selected_price[index] = data
+            setParam("selected_price", selected_price)
         }
     }
 
@@ -151,7 +150,7 @@ const AddModel = () => {
         try {
             if (generalAddingCompleted) {
                 dispatch(generalAddingDone(true))
-                history.push(`/products-image/${productId}`)
+                history.push(`/products-links/${productId}`)
             } else {
                 axios
                     .get(`product/${productId}`, { headers })
@@ -184,6 +183,11 @@ const AddModel = () => {
         setParam("selected_price", selected_price)
     }
 
+    let removeOption = (index) => {
+        let selected_price = params.selected_price
+        selected_price.splice(index, 1)
+        setParam("selected_price", selected_price)
+    }
     return (
         <>
             <EditProductHeaders productId={productId} />
@@ -288,74 +292,106 @@ const AddModel = () => {
                                             {
                                                 params?.selected_price[0] ?
                                                     params?.selected_price.map((options, index) => (
-                                                        <CFormGroup row style={{ "box-shadow": "5px 5px 8px 5px #888888", "padding": "1rem" }}>
+
+                                                        <div>
+                                                            <CFormGroup row >
                                                             <CCol xs="6" md="3">
-                                                                <label>Product Price</label>
-                                                                <CInput
-                                                                    type="number"
-                                                                    error={errors.price}
-                                                                    value={options.price}
-                                                                    onChange={e => updateSelectionPrice(index, "price", e.target.value)}
-                                                                    id="text-input"
-                                                                    name="price"
-                                                                    placeholder="Product price"
-                                                                    autoComplete="text-input"
-                                                                />
-                                                            </CCol>
-                                                            <CCol xs="6" md="3">
-                                                                <label>isDiscountable</label>
-                                                                <CSelect
-                                                                    type="text"
-                                                                    value={options.isDiscountable}
-                                                                    onChange={e => updateSelectionPrice(index, "isDiscountable", JSON.parse(e.target.value))}
-                                                                    id="select"
-                                                                >
-                                                                    <option value={true}>Yes</option>
-                                                                    <option value={false}>No</option>
-                                                                </CSelect>
-                                                            </CCol>
-                                                            {
-                                                                options.isDiscountable == true ?
-                                                                    <CCol xs="6" md="3">
-                                                                        <label>Discount (%)</label>
-                                                                        {console.log("ggg", options)}
-                                                                        <CInput
-                                                                            type="number"
-                                                                            error={errors.discountPercentage}
-                                                                            value={options.discountPercentage}
-                                                                            onChange={e => updateSelectionPrice(index, "discountPercentage", e.target.value)}
-                                                                            id="text-input"
-                                                                            name="discountPercentage"
-                                                                            placeholder="Discount percentage"
-                                                                            autoComplete="text-input"
-                                                                        />
-                                                                    </CCol>
-                                                                    : null
-                                                            }
-                                                            {
-                                                                options.isDiscountable == true ?
-                                                                    <CCol xs="6" md="3">
-                                                                        <label>Special price</label>
-                                                                        <CInput
-                                                                            type="text-input"
-                                                                            error={errors.specialPrice}
-                                                                            value={options.specialPrice}
-                                                                            // id="text-input"
-                                                                            // name="specialPrice"
-                                                                            placeholder="Special price"
-                                                                        // disabled
-                                                                        // autoComplete="text-input"
-                                                                        />
-                                                                    </CCol>
-                                                                    : null
-                                                            }
-                                                        </CFormGroup>
+                                                                    <label>Option Title</label>
+                                                                    <CInput
+                                                                        type="text-input"
+                                                                        error={errors.title}
+                                                                        value={options.title ? options.title : ''}
+                                                                        onChange={e => updateSelectionPrice(index, "title", e.target.value)}
+                                                                        id="text-input"
+                                                                        name="title"
+                                                                        placeholder="Option title"
+                                                                        autoComplete="text-input"
+                                                                    />
+                                                                </CCol>
+                                                                <CCol xs="6" md="3">
+                                                                    <label>Product Price</label>
+                                                                    <CInput
+                                                                        type="number"
+                                                                        error={errors.price}
+                                                                        value={options.price ? options.price : 0}
+                                                                        onChange={e => updateSelectionPrice(index, "price", e.target.value)}
+                                                                        id="text-input"
+                                                                        name="price"
+                                                                        placeholder="Product price"
+                                                                        autoComplete="text-input"
+                                                                    />
+                                                                </CCol>
+                                                                <CCol xs="6" md="3">
+                                                                    <label>isDiscountable</label>
+                                                                    <CSelect
+                                                                        type="text"
+                                                                        value={options.isDiscountable}
+                                                                        onChange={e => updateSelectionPrice(index, "isDiscountable", JSON.parse(e.target.value))}
+                                                                        id="select"
+                                                                    >
+                                                                        <option value={true}>Yes</option>
+                                                                        <option value={false}>No</option>
+                                                                    </CSelect>
+                                                                </CCol>
+                                                                {
+                                                                    options.isDiscountable == true ?
+                                                                        <CCol xs="6" md="3">
+                                                                            <label>Discount (%)</label>
+                                                                            {console.log("ggg", options)}
+                                                                            <CInput
+                                                                                type="number"
+                                                                                error={errors.discountPercentage}
+                                                                                value={options.discountPercentage}
+                                                                                onChange={e => updateSelectionPrice(index, "discountPercentage", e.target.value)}
+                                                                                id="text-input"
+                                                                                name="discountPercentage"
+                                                                                placeholder="Discount percentage"
+                                                                                autoComplete="text-input"
+                                                                            />
+                                                                        </CCol>
+                                                                        : null
+                                                                }
+                                                                {
+                                                                    options.isDiscountable == true ?
+                                                                        <CCol xs="6" md="3">
+                                                                            <label>Special price</label>
+                                                                            <CInput
+                                                                                type="text-input"
+                                                                                error={errors.specialPrice}
+                                                                                value={options.specialPrice}
+                                                                                // id="text-input"
+                                                                                // name="specialPrice"
+                                                                                placeholder="Special price"
+                                                                            // disabled
+                                                                            // autoComplete="text-input"
+                                                                            />
+                                                                        </CCol>
+                                                                        : null
+                                                                }
+                                                            </CFormGroup>
+                                                            <CFormGroup >
+                                                                <CRow style={{"justify-content": "flex-end"}}>
+                                                                <CCol style={{ "float": 'right' }} col="6" sm="3" md="3" xs="6" lg="2" xl="2" className=" mb-xl-0">
+                                                                    <CButton
+                                                                        block
+                                                                        color="danger"
+                                                                        onClick={() => {
+                                                                            removeOption(index)
+                                                                        }}
+                                                                    >
+                                                                        - Remove
+                                                                    </CButton>
+                                                                </CCol>
+                                                                </CRow>
+                                                                
+                                                            </CFormGroup>
+                                                        </div>
                                                     ))
                                                     : null
                                             }
 
                                             <CFormGroup >
-                                                <CCol style={{ "float": 'right' }} col="6" sm="3" md="3" xs="6" xl className="mb-3 mb-xl-0">
+                                                <CCol style={{ "float": 'right' }} col="6" sm="3" md="3" xs="6" lg="2" xl="2" className="mb-3 mb-xl-0">
                                                     <CButton
                                                         block
                                                         color="success"
