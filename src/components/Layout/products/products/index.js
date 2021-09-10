@@ -192,7 +192,7 @@ const AllProducts = () => {
                                                 <Edit color="gray" style={{ cursor: 'pointer' }} onClick={() => { history.push(`/edit-products/${item._id}`) }} size={20}
                                                 />
                                                 <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => {
-                                                    setDeleteConfirm(!deleteConfirm), setDeleteProductId(item._id)
+                                                    return setDeleteConfirm(!deleteConfirm), setDeleteProductId(item._id)
                                                 }} size={20}
                                                 />
                                             </td>

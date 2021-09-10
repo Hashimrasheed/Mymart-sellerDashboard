@@ -43,7 +43,6 @@ const AddLinks = () => {
         'Accept': 'application/json',
         "Authorization": `Bearer ${admin}`
     }
-    const [cats, setCats] = useState({ any: [] })
     const [params, setParams] = useState({
         manufacturer: '',
         categories: [],
@@ -93,7 +92,9 @@ const AddLinks = () => {
                 let index
                 data = params?.related_product
                 data?.map((id, i) => {
-                    if (id == value) flag = false, index = i
+                    if (id == value) {
+                        return flag = false, index = i
+                    }
                 })
                 if (flag === true) {
                     params?.related_product ? data = [...params.related_product, value] : data = [value]
@@ -131,10 +132,23 @@ const AddLinks = () => {
                     .then(async (res) => {
                         if (res) {
                             if (res?.data?.status_code === 200) {
-                                setParams(res?.data?.data?.product?.general)
+                                let categories = []
+                                let manufacturer = res?.data?.data?.product?.links?.manufacturer._id
+                                res?.data?.data?.product?.links?.categories.map((cat) => {
+                                    categories.push(cat._id)
+                                })
+                                let links = {
+                                    categories: categories,
+                                    manufacturer: manufacturer,
+                                    related_product: res?.data?.data?.product?.links?.related_product,
+                                }
+                                setParams(links)
+                                console.log("asd", params);
                             }
                         }
-                    }).then(async () => {
+                    })
+                    .then(async () => {
+
                         let brands = await axios
                             .get(`brand/get-active`, { headers })
                             .catch(err => {
@@ -166,7 +180,7 @@ const AddLinks = () => {
         console.log("cloe");
         setParams(prev => {
             let data = []
-            params.categories
+            // params.categories
             params?.categories?.map((cat) => {
                 if (cat != catId) {
                     data.push(cat)
@@ -290,6 +304,7 @@ const AddLinks = () => {
                                                                                 id={prod._id}
                                                                                 name="inline-checkbox1"
                                                                                 value={prod._id}
+                                                                                checked={params.related_product.includes(prod._id) ? true : false}
                                                                                 onClick={e => setParam("related_product", e.target.value)}
                                                                             />
                                                                             <CLabel variant="custom-checkbox" htmlFor={prod._id}></CLabel>

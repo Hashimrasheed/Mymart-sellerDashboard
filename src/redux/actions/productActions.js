@@ -7,10 +7,10 @@ let headers = {
     "Authorization": `Bearer ${admin}`
 }
 
-export const generalAdding = () => {
+export const generalAdding = (payload) => {
     return {
         type: ActionTypes.GENERAL_ADDING,
-        payload: true
+        payload: payload
     }
 }
 
@@ -46,6 +46,6 @@ export const fetchRelatedProducts = async () => {
         })
     return {
         type: ActionTypes.FETCH_RELATED_PRODUCT,
-        payload: response?.data?.data
+        payload: product
     }
 }

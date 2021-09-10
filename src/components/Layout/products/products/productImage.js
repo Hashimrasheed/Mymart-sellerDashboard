@@ -8,18 +8,9 @@ import {
     CCol,
     CForm,
     CFormGroup,
-    CInput,
-    CLabel,
-    CSelect,
     CRow,
-    CNav,
-    CNavItem,
-    CNavLink,
 } from '@coreui/react'
 import { Image, Edit, Trash } from "react-feather";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { generalAdding, generalAddingDone } from '../../../../redux/actions/productActions'
 import { getToken, axios } from '../../../../reusable'
@@ -33,47 +24,57 @@ const AddImage = () => {
     const dispatch = useDispatch();
     let { productId } = useParams()
     const inputFile = useRef(null)
+    const additionalInputFile = useRef(null)
+
+    let headers = {
+        'Accept': 'application/json',
+        "Authorization": `Bearer ${admin}`
+    }
 
     let response
-    const [params, setParams] = useState({
-        image_url: '',
-        image: '',
+    const [mainImageParams, setMainImageParams] = useState({
+        _id: '',
+        main_image: '',
+        main_image_url: '',
+        type: '',
     })
+    const [additionalImageParams, setAdditionalImageParams] = useState([{
+        _id: '',
+        main_image: '',
+        main_image_url: '',
+        type: '',
+    }])
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({ any: [] })
 
-    const handleValidation = () => {
+    const handleValidation = (e) => {
         let errors = {};
         let formIsValid = true;
         //Name
-        if (!params.name) {
+        if (!e?.target?.files[0]) {
             formIsValid = false;
-            errors["name"] = "This field required";
-        }
-        if (!params.description) {
-            formIsValid = false;
-            errors["description"] = "This field required";
+            errors["image"] = "This field required";
         }
         setErrors(errors);
         return formIsValid;
     }
 
-    const addGeneral = async () => {
+    const uploadImage = async (e) => {
         setLoading(true);
-        if (handleValidation()) {
+        if (handleValidation(e)) {
             try {
-                let headers = {
-                    'Accept': 'application/json',
-                    "Authorization": `Bearer ${admin}`
-                }
+                let imageUploadParams = new FormData()
+                imageUploadParams.append('image', e.target.files[0]);
+                imageUploadParams.append("product_id", productId);
+                imageUploadParams.append("type", "main");
                 response = await axios
-                    .post('product/add-general', params, { headers })
+                    .post('product/upload_image', imageUploadParams, { headers })
                     .catch(err => {
                         console.log(err);
                     })
                 if (response) {
                     if (response?.data?.status_code === 200) {
-                        dispatch(generalAdding())
+                        dispatch(generalAdding(!generalAddingCompleted))
                     }
                 }
             } catch (e) {
@@ -83,33 +84,107 @@ const AddImage = () => {
         setLoading(false);
     };
 
-    const setParam = (name: string, value: any) => {
-        setParams(prev => {
-            return {
-                ...prev,
-                [name]: value
+    const deleteImage = async (imgId) => {
+        try {
+            console.log("deletng");
+            await axios
+                .delete(`product/remove_image/${productId}/${imgId}`, { headers })
+                .then((deleteImage) => {
+                    if (deleteImage?.data?.status_code === 200) {
+                        console.log("hhhhhh");
+                        dispatch(generalAdding(!generalAddingCompleted))
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const uploadAdditionalImage = async (e) => {
+        setLoading(true);
+        if (handleValidation(e)) {
+            try {
+                let imageUploadParams = new FormData()
+                imageUploadParams.append('image', e.target.files[0]);
+                imageUploadParams.append("product_id", productId);
+                imageUploadParams.append("type", "other");
+                response = await axios
+                    .post('product/upload_image', imageUploadParams, { headers })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                if (response) {
+                    if (response?.data?.status_code === 200) {
+                        dispatch(generalAdding(!generalAddingCompleted))
+                    }
+                }
+            } catch (e) {
+                console.log(e);
             }
-        });
+        }
+        setLoading(false);
     };
 
-    const history = useHistory();
     useEffect(() => {
-        console.log(generalAddingCompleted);
-        if (generalAddingCompleted) {
-            dispatch(generalAddingDone(true))
-            history.push("/products")
-        }
+        console.log("second hhhh");
+        axios
+            .get(`product/fetch_all_images/${productId}`, { headers })
+            .then(async (res) => {
+                if (res) {
+                    if (res?.data?.status_code === 200) {
+                        let additionalImages = []
+                        let mainImageData = {
+                            _id: '',
+                            main_image: '',
+                            main_image_url: '',
+                            type: '',
+                        }
+                        let additionalImageData = {
+                            _id: '',
+                            main_image: '',
+                            main_image_url: '',
+                            type: '',
+                        }
+                        res?.data?.data.map(img => {
+                            if (img.type == 'main') {
+                                mainImageData = {
+                                    _id: img._id,
+                                    main_image: img.main_image,
+                                    main_image_url: img.main_image_url,
+                                    type: img.type,
+                                }
+                            } else {
+                                additionalImageData = {
+                                    _id: img._id,
+                                    main_image: img.main_image,
+                                    main_image_url: img.main_image_url,
+                                    type: img.type,
+                                }
+                                additionalImages.push(additionalImageData)
+                            }
+                        })
+                        setMainImageParams(mainImageData)
+                        setAdditionalImageParams(additionalImages)
+                    }
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }, [generalAddingCompleted])
 
     const openFileInput = async () => {
         await inputFile.current.click();
     };
 
+    const openAdditionalFileInput = async () => {
+        await additionalInputFile.current.click();
+    };
 
-    const handleImageUpload = (e) => {
-        setParam("image_url", null)
-        setParam("image", e.target.files[0])
-    }
     return (
         <>
             <EditProductHeaders productId={productId} />
@@ -131,84 +206,94 @@ const AddImage = () => {
                     <CFormText>This is a help text</CFormText>
                   </CCol>
                 </CFormGroup> */}
-                                <CCol xl="2" md="4" sm="6" xs="12" className="mb-4">
+                                <h5>Main Image </h5>
+                                <CCol xl="2" md="4" sm="6" xs="12" className="mb-4" style={{ "border-style": "solid" }}>
                                     <div >
+
                                         <div >
                                             {
-                                                params.image || params.image_url ? <div>
-                                                    <img style={{ width: "6rem" }} src={params.image_url ? params.image_url : params.image ? URL.createObjectURL(params.image) : ""} alt="img" />
-                                                </div>
-                                                    : null
-                                            }
-                                            <CFormGroup row>
-                                                <CCol xs="12" md="12" >
-                                                    {/* <div style={{"border-style": "groove"}}> */}
-                                                    <img
-                                                        src="/common/upload_image.jpeg"
-                                                        style={{ width: "6rem", height: "6rem", cursor: 'pointer', "border-style": "groove", "padding": "1rem" }}
-                                                        onClick={e => {
-                                                            openFileInput()
-                                                        }}
-                                                        alt="Choose file"
-                                                    />
-                                                    <input type='file' onChange={handleImageUpload} accept="jpg png jpeg" id='file' ref={inputFile} style={{ display: 'none' }} />
-                                                    {/* </div> */}
-                                                </CCol>
-                                            <Trash color="red" style={{ cursor: 'pointer', "margin-left": "1rem", "margin-top": "1rem" }} size={20} />
-                                            </CFormGroup>
-                                            <h5>Main Image
+                                                mainImageParams.main_image || mainImageParams.main_image_url ?
+                                                    <div style={{ "padding": "1rem" }}>
+                                                        <img style={{ width: "6rem" }} src={mainImageParams.main_image_url ? mainImageParams.main_image_url : mainImageParams.main_image ? URL.createObjectURL(mainImageParams.main_image) : ""} alt="img" />
+                                                        {/* <Trash color="red" style={{ cursor: 'pointer', "margin-left": "1rem", "margin-top": "1rem" }} size={20} /> */}
 
-                                            </h5>
+                                                        <Trash
+                                                            color="red"
+                                                            style={{ cursor: 'pointer', "margin-left": "1rem", "margin-top": "1rem" }}
+                                                            size={20}
+                                                            onClick={() => deleteImage(mainImageParams._id)}
+                                                        />
+                                                    </div>
+                                                    :
+                                                    <CFormGroup row>
+                                                        <CCol xs="12" md="12" >
+                                                            {/* <div style={{"border-style": "groove"}}> */}
+                                                            <img
+                                                                src="/common/upload_image.jpeg"
+                                                                style={{ width: "6rem", height: "6rem", cursor: 'pointer', "border-style": "groove", "padding": "1rem" }}
+                                                                onClick={e => {
+                                                                    openFileInput()
+                                                                }}
+                                                                alt="Choose file"
+                                                            />
+                                                            <input type='file' onChange={uploadImage} accept="jpg png jpeg" id='file' ref={inputFile} style={{ display: 'none' }} />
+                                                            {/* </div> */}
+                                                        </CCol>
+                                                    </CFormGroup>
+                                            }
+
                                         </div>
                                     </div>
                                 </CCol>
 
-                                <CCol xl="2" md="4" sm="6" xs="12" className="mb-4">
-                                    <div >
-                                        <div >
-                                            {
-                                                params.image || params.image_url ? <div>
-                                                    <img style={{ width: "6rem" }} src={params.image_url ? params.image_url : params.image ? URL.createObjectURL(params.image) : ""} alt="img" />
-                                                </div>
-                                                    : null
-                                            }
-                                            <CFormGroup row>
-                                                <CCol xs="12" md="12" >
-                                                    {/* <div style={{"border-style": "groove"}}> */}
-                                                    <img
-                                                        src="/common/upload_image.jpeg"
-                                                        style={{ width: "6rem", height: "6rem", cursor: 'pointer', "border-style": "groove", "padding": "1rem" }}
-                                                        onClick={e => {
-                                                            openFileInput()
-                                                        }}
-                                                        alt="Choose file"
-                                                    />
-                                                    <input type='file' onChange={handleImageUpload} accept="jpg png jpeg" id='file' ref={inputFile} style={{ display: 'none' }} />
-                                                    {/* </div> */}
-                                                </CCol>
-                                            </CFormGroup>
-                                            <h5>Additional Images</h5>
-                                        </div>
+                                <h5>Additional Images</h5>
+                                <CCol xl="2" md="4" sm="6" xs="12" className="mb-4" style={{ "border-style": "solid" }}>
+                                    {
+                                        additionalImageParams.length ?
+                                            additionalImageParams.map((additionalImage) => {
+                                                <div >
+                                                    <div >
+                                                        {
+                                                            additionalImage.main_image || additionalImage.main_image_url ?
+                                                                <div>
+                                {console.log("adsfadf",additionalImage)}
 
+                                                                    <img style={{ width: "6rem" }} src={additionalImage.main_image_url ? additionalImage.main_image_url : additionalImage.main_image ? URL.createObjectURL(additionalImage.main_image) : ""} alt="img" />
+                                                                    <Trash
+                                                                        color="red"
+                                                                        style={{ cursor: 'pointer', "margin-left": "1rem", "margin-top": "1rem" }}
+                                                                        size={20}
+                                                                        onClick={() => deleteImage(mainImageParams._id)}
+                                                                    />
+                                                                </div>
+                                                                :
+                                                                null
+                                                        }
+                                                    </div>
+
+                                                </div>
+                                            })
+                                            : null
+                                    }
+                                    <div >
+                                        <CFormGroup row>
+                                            <CCol xs="12" md="12" >
+                                                {/* <div style={{"border-style": "groove"}}> */}
+                                                <img
+                                                    src="/common/upload_image.jpeg"
+                                                    style={{ width: "6rem", height: "6rem", cursor: 'pointer', "border-style": "groove", "padding": "1rem" }}
+                                                    onClick={e => {
+                                                        openAdditionalFileInput()
+                                                    }}
+                                                    alt="Choose file"
+                                                />
+                                                <input type='file' onChange={uploadAdditionalImage} accept="jpg png jpeg" id='file' ref={additionalInputFile} style={{ display: 'none' }} />
+                                            </CCol>
+                                        </CFormGroup>
                                     </div>
                                 </CCol>
                             </CForm>
                         </CCardBody>
-                        <CCardFooter>
-                            <CButton
-                                className="m-1"
-                                type="submit"
-                                size="m"
-                                onClick={e => {
-                                    e.preventDefault();
-                                    addGeneral();
-                                }}
-                                color="primary"
-                            >
-                                {loading ? "Saving.." : "Save & Next"}
-                            </CButton>
-                            {/* <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban" /> Reset</CButton> */}
-                        </CCardFooter>
                     </CCard>
                 </CCol>
             </CRow>

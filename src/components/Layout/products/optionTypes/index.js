@@ -247,7 +247,7 @@ const OptionTypes = () => {
                                         (item) => (
                                             <td>
                                                 <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => {
-                                                    setDeleteConfirm(!deleteConfirm), setDeleteOptionTypeId(item._id)
+                                                   return setDeleteConfirm(!deleteConfirm), setDeleteOptionTypeId(item._id)
                                                 }} size={20}
                                                 />
                                             </td>
@@ -261,8 +261,10 @@ const OptionTypes = () => {
                         show={modal}
                         style={{ top: "5rem" }}
                         onClose={() => {
-                            setModal(!modal);
-                            editOptionType ? setEditOptionType(false) : null
+                            return (
+                                setModal(!modal),
+                                editOptionType ? setEditOptionType(false) : null
+                                )
                         }}
                         color="info"
                     >
@@ -288,8 +290,10 @@ const OptionTypes = () => {
                         </CModalBody>
                         <CModalFooter>
                             <CButton color="secondary" onClick={() => {
-                                setModal(!modal);
-                                editOptionType ? setEditOptionType(false) : null
+                                return (
+                                    setModal(!modal),
+                                    editOptionType ? setEditOptionType(false) : null
+                                    )
                             }}>Cancel</CButton>
                             {
                                 editOptionType ?

@@ -239,9 +239,9 @@ const Removables = () => {
                                     'Delete':
                                         (item) => (
                                             <td>
-                                                <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => {
+                                                <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => (
                                                     setDeleteConfirm(!deleteConfirm), setDeleteRemovableId(item._id)
-                                                }} size={20}
+                                                )} size={20}
                                                 />
                                             </td>
                                         )
@@ -253,10 +253,10 @@ const Removables = () => {
                     <CModal
                         show={modal}
                         style={{ top: "5rem" }}
-                        onClose={() => {
-                            setModal(!modal);
+                        onClose={() => (
+                            setModal(!modal),
                             editRemovable ? setEditRemovable(false) : null
-                        }}
+                        )}
                         color="info"
                     >
                         <CModalHeader closeButton>
@@ -280,10 +280,10 @@ const Removables = () => {
                             </CFormGroup>
                         </CModalBody>
                         <CModalFooter>
-                            <CButton color="secondary" onClick={() => {
-                                setModal(!modal);
+                            <CButton color="secondary" onClick={() => (
+                                setModal(!modal),
                                 editRemovable ? setEditRemovable(false) : null
-                            }}>Cancel</CButton>
+                            )}>Cancel</CButton>
                             {
                                 editRemovable ?
                                     <CButton

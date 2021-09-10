@@ -66,8 +66,8 @@ const AddProduct = () => {
                 if (response) {
                     if (response?.data?.status_code === 200) {
                         console.log("response", response?.data);
-                        dispatch(generalAdding())
                         setProduct(response?.data?.data.product)
+                        dispatch(generalAdding())
                     }
                 }
             } catch (e) {
@@ -88,7 +88,6 @@ const AddProduct = () => {
 
     const history = useHistory();
     useEffect(() => {
-        console.log(generalAddingCompleted);
         if (generalAddingCompleted) {
             dispatch(generalAddingDone(true))
             history.push(`/products-model/${product._id}`)

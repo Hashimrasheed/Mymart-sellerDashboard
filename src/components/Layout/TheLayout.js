@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { axios, getToken } from '../../reusable'
+import { useSelector, useDispatch } from 'react-redux'
+import { setAdminData } from '../../redux/actions/loginActions'
 import {
   TheContent,
   TheSidebar,
@@ -8,6 +10,7 @@ import {
 } from './index'
 
 const TheLayout = () => {
+  const dispatch = useDispatch()
   
   useEffect(async () => {
     try {

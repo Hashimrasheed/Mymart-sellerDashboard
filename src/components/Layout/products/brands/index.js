@@ -306,7 +306,9 @@ const Brands = () => {
                     (item) => (
                       <td>
                         <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => {
-                          setDeleteConfirm(!deleteConfirm), setDeleteBrandId(item._id)
+                          return (
+                            setDeleteConfirm(!deleteConfirm), setDeleteBrandId(item._id)
+                          )
                         }} size={20}
                         />
                       </td>
@@ -320,8 +322,10 @@ const Brands = () => {
             show={modal}
             style={{ top: "5rem" }}
             onClose={() => {
-              setModal(!modal);
-              editBrand ? setEditBrand(false) : null
+              return (
+                setModal(!modal),
+                editBrand ? setEditBrand(false) : null
+                )
             }}
             color="info"
           >
@@ -382,8 +386,10 @@ const Brands = () => {
             </CModalBody>
             <CModalFooter>
               <CButton color="secondary" onClick={() => {
-                setModal(!modal);
+                return(
+                setModal(!modal),
                 editBrand ? setEditBrand(false) : null
+                )
               }}>Cancel</CButton>
               {
                 editBrand ?

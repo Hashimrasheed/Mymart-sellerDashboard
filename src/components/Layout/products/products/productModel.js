@@ -17,8 +17,6 @@ import {
     CNavLink,
     CHeader,
 } from '@coreui/react'
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { generalAdding, generalAddingDone } from '../../../../redux/actions/productActions'
@@ -54,7 +52,7 @@ const AddModel = () => {
         let errors = {};
         let formIsValid = true;
         //Name
-        if (!params.price) {
+        if (!params.price && !params.selected_price[0]) {
             formIsValid = false;
             errors["price"] = "This field required";
         }
@@ -68,12 +66,14 @@ const AddModel = () => {
                 errors["specialPrice"] = "This field required";
             }
         }
+        console.log(errors);
         setErrors(errors);
         return formIsValid;
     }
 
     const addEditModel = async () => {
         setLoading(true);
+        console.log('H2',params);
         if (handleValidation()) {
             try {
                 let response = await axios
@@ -103,7 +103,7 @@ const AddModel = () => {
         if (name == "discountPercentage") {
             setParams(prev => {
                 let specialPrice = 0
-                params.price ? specialPrice = params.price - params.price * Number(value) / 100 : 0
+                params.price ? specialPrice = params.price - params.price * Number(value) / 100 : specialPrice = 0
                 return {
                     ...prev,
                     ["specialPrice"]: specialPrice
@@ -113,7 +113,7 @@ const AddModel = () => {
         if (name == "price") {
             setParams(prev => {
                 let specialPrice = 0
-                params.price ? specialPrice = value - value * Number(params.discountPercentage) / 100 : 0
+                params.price ? specialPrice = value - value * Number(params.discountPercentage) / 100 : specialPrice = 0
                 return {
                     ...prev,
                     ["specialPrice"]: specialPrice
@@ -130,7 +130,7 @@ const AddModel = () => {
         setParam("selected_price", selected_price)
         if (key == "discountPercentage") {
             let specialPrice = 0
-            data.price ? specialPrice = data.price - data.price * Number(value) / 100 : 0
+            data.price ? specialPrice = data.price - data.price * Number(value) / 100 : specialPrice = 0
             set(data, "specialPrice", specialPrice);
             selected_price[index] = data
             console.log("selected_pricess", selected_price);
@@ -138,7 +138,7 @@ const AddModel = () => {
         }
         if (key == "price") {
             let specialPrice = 0
-            data.price ? specialPrice = value - value * Number(data.discountPercentage) / 100 : 0
+            data.price ? specialPrice = value - value * Number(data.discountPercentage) / 100 : specialPrice = 0
             set(data, "specialPrice", specialPrice);
             selected_price[index] = data
             setParam("selected_price", selected_price)
@@ -157,7 +157,10 @@ const AddModel = () => {
                     .then((res) => {
                         if (res) {
                             if (res?.data?.status_code === 200) {
-                                setParams(res?.data?.data?.product?.model)
+                                console.log("asdf",res?.data?.data)
+                                if (res?.data?.data?.product?.model) {
+                                    setParams(res?.data?.data?.product?.model)
+                                }
                             }
                         }
                     })
@@ -287,7 +290,6 @@ const AddModel = () => {
                                         <div>
                                             <h4 style={{ "margin-top": "1.5rem" }}>
                                                 Selection Price
-                                                {console.log("selected_price", params)}
                                             </h4>
                                             {
                                                 params?.selected_price[0] ?

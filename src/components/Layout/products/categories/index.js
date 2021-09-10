@@ -329,7 +329,7 @@ const Categories = () => {
                                         (item) => (
                                             <td>
                                                 <Trash color="red" style={{ cursor: 'pointer' }} onClick={() => {
-                                                    setDeleteConfirm(!deleteConfirm), setDeleteCategoryId(item._id)
+                                                    return setDeleteConfirm(!deleteConfirm), setDeleteCategoryId(item._id)
                                                 }} size={20}
                                                 />
                                             </td>
@@ -343,8 +343,11 @@ const Categories = () => {
                         show={modal}
                         style={{ top: "5rem" }}
                         onClose={() => {
-                            setModal(!modal);
-                            editCategory ? setEditCategory(false) : null
+                            return (
+
+                                setModal(!modal),
+                                editCategory ? setEditCategory(false) : null
+                                )
                         }}
                         color="info"
                     >
@@ -431,8 +434,10 @@ const Categories = () => {
                         </CModalBody>
                         <CModalFooter>
                             <CButton color="secondary" onClick={() => {
-                                setModal(!modal);
-                                editCategory ? setEditCategory(false) : null
+                                return(
+                                    setModal(!modal),
+                                    editCategory ? setEditCategory(false) : null
+                                    )
                             }}>Cancel</CButton>
                             {
                                 editCategory ?
