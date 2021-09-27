@@ -15,6 +15,7 @@ import {
     CNav,
     CNavItem,
     CNavLink,
+    CSwitch,
 } from '@coreui/react'
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -39,6 +40,7 @@ const EditProduct = () => {
         name: '',
         description: '',
     })
+    const [status, setStatus] = useState();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({ any: [] })
 
@@ -79,6 +81,17 @@ const EditProduct = () => {
         setLoading(false);
     };
 
+    const changeStatus = async () => {
+        let productStatus = await axios
+            .put(`product/change-status/${productId}`, {}, { headers })
+            .catch(err => {
+                console.log(err);
+            })
+            if(productStatus) {
+                setStatus(productStatus?.data?.data?.product?.status)
+            }
+    }
+
     const setParam = (name: string, value: any) => {
         setParams(prev => {
             return {
@@ -101,6 +114,8 @@ const EditProduct = () => {
                         if (res) {
                             if (res?.data?.status_code === 200) {
                                 setParams(res?.data?.data?.product?.general)
+                                console.log("status", res?.data?.data?.product?.status);
+                                setStatus(res?.data?.data?.product?.status)
                             }
                         }
                     })
@@ -120,8 +135,19 @@ const EditProduct = () => {
             <CRow>
                 <CCol xs="12" md="12">
                     <CCard >
-                        <CCardHeader>
+                        <CCardHeader className="d-flex justify-content-between">
                             Edit Product
+
+                            <div className="d-flex">
+                                <h5 className="mr-2">status</h5>
+                                <CSwitch
+                                    className="mr-1"
+                                    color="success"
+                                    shape="pill"
+                                    checked={status == true ? true : false}
+                                    onClick={changeStatus}
+                                />
+                            </div>
                         </CCardHeader>
                         <CCardBody>
                             <CForm

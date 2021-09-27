@@ -155,7 +155,7 @@ const AddLinks = () => {
                                 console.log(err);
                             })
                         let product = await axios
-                            .get(`product`, { headers })
+                            .get(`product/`, { headers })
                             .catch(err => {
                                 console.log(err);
                             })
@@ -304,7 +304,7 @@ const AddLinks = () => {
                                                                                 id={prod._id}
                                                                                 name="inline-checkbox1"
                                                                                 value={prod._id}
-                                                                                checked={params.related_product.includes(prod._id) ? true : false}
+                                                                                checked={params.related_product ?  params.related_product.includes(prod._id) ? true : false: false}
                                                                                 onClick={e => setParam("related_product", e.target.value)}
                                                                             />
                                                                             <CLabel variant="custom-checkbox" htmlFor={prod._id}></CLabel>
