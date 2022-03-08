@@ -234,7 +234,7 @@ const Brands = () => {
                 </CButton>
               </CRow>
             </CCardHeader>
-            <CCardHeader style={{ padding: "0.25rem" }}>
+            {/* <CCardHeader style={{ padding: "0.25rem" }}>
               <CFormGroup  >
                 <CCol md="6" >
                   <CInputGroup>
@@ -245,7 +245,7 @@ const Brands = () => {
                   </CInputGroup>
                 </CCol>
               </CFormGroup>
-            </CCardHeader>
+            </CCardHeader> */}
             <CCardBody >
               <CDataTable
                 items={brands}

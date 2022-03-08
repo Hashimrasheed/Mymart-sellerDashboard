@@ -33,7 +33,7 @@ const getBadge = status => {
     }
 }
 
-const fields = ['#', 'Image', 'Name', 'Category', 'Brand', 'Price', 'Display Home', 'Status', 'Order', 'Action']
+const fields = ['#', 'Image', 'Name', 'Category', 'Brand', 'Price', 'Status', 'Order No', 'Action']
 
 const AllProducts = () => {
     const history = useHistory();
@@ -53,7 +53,6 @@ const AllProducts = () => {
         try {
             axios.get('product/', { headers })
                 .then((response) => {
-                    console.log("zzz", response);
                     if (response) {
                         if (response?.data?.status_code === 200) {
                             setProducts(response?.data?.data?.product)
@@ -73,7 +72,7 @@ const AllProducts = () => {
     const deleteProduct = async (_id) => {
         setLoading(true);
         try {
-            axios.delete(`category/delete_category/${_id}`, { headers })
+            axios.delete(`product/delete/${_id}`, { headers })
                 .then(res => {
                     setLoading(false);
                     setDeleteConfirm(false)
@@ -102,7 +101,7 @@ const AllProducts = () => {
                                 </CButton>
                             </CRow>
                         </CCardHeader>
-                        <CCardHeader style={{ padding: "0.25rem" }}>
+                        {/* <CCardHeader style={{ padding: "0.25rem" }}>
                             <CFormGroup  >
                                 <CCol md="6" >
                                     <CInputGroup>
@@ -113,14 +112,14 @@ const AllProducts = () => {
                                     </CInputGroup>
                                 </CCol>
                             </CFormGroup>
-                        </CCardHeader>
+                        </CCardHeader> */}
                         <CCardBody >
                             <CDataTable
                                 items={products}
                                 fields={fields}
                                 responsive={true}
                                 outlined
-                                itemsPerPage={10}
+                                itemsPerPage={20}
                                 pagination
                                 activePage
                                 hover
@@ -138,7 +137,7 @@ const AllProducts = () => {
                                     'Image':
                                         (item) => (
                                             <td>
-                                                <img width="30px" src={item.image_url} alt="img" />
+                                                <img width="30px" src={item?.image?.thumbnail_image_url} alt="img" />
                                             </td>
                                         ),
                                     'Name':
@@ -150,27 +149,31 @@ const AllProducts = () => {
                                     'Category':
                                         (item) => (
                                             <td>
-                                                {item.product_count}
+                                                {
+                                                    item.categories && item.categories.map((category, i) => {
+                                                        return `${i != 0 ? ", " : ""}${category.cat_name}`
+                                                    })
+                                                }
                                             </td>
                                         ),
                                     'Brand':
                                         (item) => (
                                             <td>
-                                                {item.order_no}
+                                                {item.manufacturer}
                                             </td>
                                         ),
                                     'Price':
                                         (item) => (
                                             <td>
-                                                {item.order_no}
+                                                {item.selection_price_type == "selection_price" ? "options" : item.isDiscountable ? "₹ " + item.specialPrice : item.prod_price ?  "₹ " + item.prod_price : ""}
                                             </td>
                                         ),
-                                    'Display Home':
-                                        (item) => (
-                                            <td>
-                                                {item.display_home ? "Show" : "Hide"}
-                                            </td>
-                                        ),
+                                    // 'Display Home':
+                                    //     (item) => (
+                                    //         <td>
+                                    //             {item.display_home ? "Show" : "Hide"}
+                                    //         </td>
+                                    //     ),
                                     'Status':
                                         (item) => (
                                             <td>
@@ -179,7 +182,7 @@ const AllProducts = () => {
                                                 </CBadge>
                                             </td>
                                         ),
-                                    'Order':
+                                    'Order No':
                                         (item) => (
                                             <td>
                                                 {item.order_no}

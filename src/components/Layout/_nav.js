@@ -28,16 +28,16 @@ const _nav =  [
         name: 'Categories',
         to: '/categories',
       },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Option Types',
-        to: '/option-types',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Options',
-        to: '/option-values',
-      },
+      // {
+      //   _tag: 'CSidebarNavItem',
+      //   name: 'Option Types',
+      //   to: '/option-types',
+      // },
+      // {
+      //   _tag: 'CSidebarNavItem',
+      //   name: 'Options',
+      //   to: '/option-values',
+      // },
       // {
       //   _tag: 'CSidebarNavItem',
       //   name: 'Add Ons Types',
@@ -48,11 +48,11 @@ const _nav =  [
       //   name: 'Add Ons Values',
       //   to: '/add-ons-values',
       // },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Removables',
-        to: '/removables',
-      },
+      // {
+      //   _tag: 'CSidebarNavItem',
+      //   name: 'Removables',
+      //   to: '/removables',
+      // },
       {
         _tag: 'CSidebarNavItem',
         name: 'Product Management',

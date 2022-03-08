@@ -245,7 +245,7 @@ const Categories = () => {
                                 </CButton>
                             </CRow>
                         </CCardHeader>
-                        <CCardHeader style={{ padding: "0.25rem" }}>
+                        {/* <CCardHeader style={{ padding: "0.25rem" }}>
                             <CFormGroup  >
                                 <CCol md="6" >
                                     <CInputGroup>
@@ -256,7 +256,7 @@ const Categories = () => {
                                     </CInputGroup>
                                 </CCol>
                             </CFormGroup>
-                        </CCardHeader>
+                        </CCardHeader> */}
                         <CCardBody >
                             <CDataTable
                                 items={categories}
