@@ -78,26 +78,26 @@ const _nav =  [
       },
     ],
   },
-  {
-    _tag: 'CSidebarNavItem',
-    name: 'Customers',
-    to: '/customers',
-    icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon"/>,
-    badge: {
-      color: 'info',
-      // text: 'NEW',
-    }
-  },
-  {
-    _tag: 'CSidebarNavItem',
-    name: 'Contact Us',
-    to: '/Contact-us',
-    icon: 'cil-calculator',
-    badge: {
-      color: 'info',
-      // text: 'NEW',
-    },
-  },
+  // {
+  //   _tag: 'CSidebarNavItem',
+  //   name: 'Customers',
+  //   to: '/customers',
+  //   icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon"/>,
+  //   badge: {
+  //     color: 'info',
+  //     // text: 'NEW',
+  //   }
+  // },
+  // {
+  //   _tag: 'CSidebarNavItem',
+  //   name: 'Contact Us',
+  //   to: '/Contact-us',
+  //   icon: 'cil-calculator',
+  //   badge: {
+  //     color: 'info',
+  //     // text: 'NEW',
+  //   },
+  // },
   {
     _tag: 'CSidebarNavDropdown',
     name: 'My Store',
