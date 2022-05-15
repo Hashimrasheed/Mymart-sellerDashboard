@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { axios, getToken } from '../../reusable'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setAdminData } from '../../redux/actions/loginActions'
 import {
   TheContent,

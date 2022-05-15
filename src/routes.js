@@ -13,6 +13,7 @@ const EditProducts = React.lazy(() => import('./components/Layout/products/produ
 const ProductsModel = React.lazy(() => import('./components/Layout/products/products/productModel'));
 const ProductsLinks = React.lazy(() => import('./components/Layout/products/products/productLinks'));
 const ProductsImage = React.lazy(() => import('./components/Layout/products/products/productImage'));
+const Settings = React.lazy(() => import('./components/Layout/settings'));
 
 const Sellers = React.lazy(() => import('./components/Layout/sellers'));
 // const Customers = React.lazy(() => import('./components/Layout/customers'));
@@ -38,7 +39,7 @@ const routes = [
   { path: '/products-image/:productId', name: 'products', component: ProductsImage },
   { path: '/orders', name: 'orders', component: Dashboard },
   { path: '/delivered-orders', name: 'delivered-orders', component: Dashboard },
-  { path: '/settings', name: 'settings', component: Sellers },
+  { path: '/settings', name: 'settings', component: Settings },
   { path: '/banners', name: 'banners', component: Sellers },
   
   // { path: '/profile', name: 'profile', component: Sellers },
